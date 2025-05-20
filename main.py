@@ -1,4 +1,4 @@
-from fastapi import FastAPI, File, UploadFile
+from fastapi import FastAPI, UploadFile, File
 import pandas as pd
 from influxdb_client import InfluxDBClient, Point, WriteOptions
 
@@ -10,7 +10,11 @@ async def upload_csv(file: UploadFile = File(...)):
     df['Timestamp'] = pd.to_datetime(df['YYYY/MM/DD'] + ' ' + df['HH:MM:SS'], errors='coerce')
     df['SHAKER Output'] = df.get('SHAKER #1 (Units)', 0).fillna(0) + df.get('SHAKER #2 (Units)', 0).fillna(0)
 
-    client = InfluxDBClient(url="http://influxdb:8086", token="derrick-token", org="derrick")
+    client = InfluxDBClient(
+        url="https://us-east-1-1.aws.cloud2.influxdata.com",
+        token="your-influx-token",
+        org="derrick"
+    )
     write_api = client.write_api(write_options=WriteOptions(batch_size=500))
 
     for row in df.itertuples():
