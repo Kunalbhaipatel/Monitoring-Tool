@@ -1,8 +1,13 @@
+
 from fastapi import FastAPI, UploadFile, File
 import pandas as pd
 from influxdb_client import InfluxDBClient, Point, WriteOptions
 
 app = FastAPI()
+
+@app.get("/")
+def health_check():
+    return {"status": "API running"}
 
 @app.post("/upload")
 async def upload_csv(file: UploadFile = File(...)):
